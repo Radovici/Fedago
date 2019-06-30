@@ -1,0 +1,90 @@
+﻿@model DataBazrPeer.Controllers.HomeController
+
+@{
+    ViewData["Title"] = "QueryWizard";
+}
+
+@*<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>*@
+<!-- Scripts -->
+@*<script src="~/DataTables/jquery-3.3.1.js"></script>*@
+<script src="~/DataTables/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/DataTables/jquery.dataTables.min.css" />
+
+<!-- Page Wrapper -->
+<div id="page-wrapper">
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <table id="example" class="table table-striped table-condensed dataTable">
+            <thead><tr></tr></thead>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var publicUrl = "@Model.ClientApiCallbackUrl/55";
+        //$('#example').DataTable({
+        //    "processing": true,
+        //    "serverSide": true,
+        //    "ajax": {
+        //        "url": publicUrl,
+        //        "type": "POST",
+        //        "data": {
+        //            "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NTU0NDM0OTcsImV4cCI6MTg3MDgwMzQ5NywiaXNzIjoiaHR0cHM6Ly9kZW1vLmZlZGFnby5jb20iLCJhdWQiOlsiaHR0cHM6Ly9kZW1vLmZlZGFnby5jb20vcmVzb3VyY2VzIiwibm9wX2FwaSJdLCJjbGllbnRfaWQiOiJhYTk0MzgxYS02MzY1LTQyNGQtYWFmMC1lZGUxMzUxZDlhZTciLCJzdWIiOiJhYTk0MzgxYS02MzY1LTQyNGQtYWFmMC1lZGUxMzUxZDlhZTciLCJhdXRoX3RpbWUiOjE1NTU0NDM0OTYsImlkcCI6ImxvY2FsIiwic2NvcGUiOlsibm9wX2FwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.bpaomM0ehZIkYHW9vqCqkvM_dRfHZ2t5gcWOiXt0cNkLx8yn-AUfG2yhdv893m3_pIhVA_MnFwwwVuu_e88ECc5an_yB2KcDvLXc3szIeTjMQQoq4A_8KoTZOsbiua1WBl98T1Lv5Q2KTtrySnguKSd4zKmUYnqrLnDfAVq_ZqtIHUxzpZHuhG3OiJTt4pQhca3eUdNw8KHK1qnGohT3JBzMCcBYi6HFDVs-VN1oe_1LS9h5cGV86KkAajV__kbohXDpBJyKsni73EPwx4QmeiJyQQPYUBPULjlVGpymnbpG3mfuoz5_C0NGZ8_X0whLZB5eBSbd18-HVYD8PnOkYA"
+        //        }
+        //    }
+        //});
+
+        //https://github.com/martinberlin/datatables-dynamic-columns/blob/master/dynamic-headers.html
+        var data,
+            tableName = '#example',
+            columns,
+            str,
+            jqxhr = $.ajax({ url: publicUrl, type: "POST", dataType: "json", contentType: "application/x-www-form-urlencoded; charset=UTF-8" })
+                .done(function () {
+                    data = JSON.parse(jqxhr.responseText);
+                    // Iterate each column and print table headers for Datatables
+                    $.each(data.columns, function (k, colObj) {
+                        str = '<th>' + colObj.name + '</th>';
+                        $(str).appendTo(tableName + '>thead>tr');
+                    });
+                    // Add some Render transformations to Columns
+                    // Not a good practice to add any of this in API/ Json side
+                    data.columns[0].render = function (data, type, row) {
+                        return '<h4>' + data + '</h4>';
+                    }
+                    // Debug? console.log(data.columns[0]);
+                    $(tableName).dataTable({
+                        //"processing": true,
+                        //"serverSide": true,
+                        "data": data.data,
+                        "columns": data.columns,
+                        "fnInitComplete": function () {
+                            // Event handler to be fired when rendering is complete (Turn off Loading gif for example)
+                            console.log('Datatable rendering complete');
+                        }
+                    });
+                })
+                .fail(function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    console.log(msg);
+                });
+    });
+</script>

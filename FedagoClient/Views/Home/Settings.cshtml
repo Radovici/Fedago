@@ -1,0 +1,148 @@
+﻿@model DataBazrPeer.Controllers.HomeController
+
+@{
+    ViewData["Title"] = "Fedago Settings";
+}
+
+<!--
+    Ethereal by HTML5 UP
+    html5up.net | ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<!--
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+-->
+<link rel="stylesheet" href="~/Html5Up/Ethereal/assets/css/main.css" />
+<noscript><link rel="stylesheet" href="~/Html5Up/Ethereal/assets/css/noscript.css" /></noscript>
+
+<!-- Scripts -->
+<script src="~/Html5Up/Ethereal/assets/js/jquery.min.js"></script>
+<script src="~/Html5Up/Ethereal/assets/js/browser.min.js"></script>
+<script src="~/Html5Up/Ethereal/assets/js/breakpoints.min.js"></script>
+<script src="~/Html5Up/Ethereal/assets/js/main.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Add smooth scrolling to all links
+        $("a").on('click', function (event) {
+
+            // Make sure this.hash has a value before overriding default behavior
+            if (this.hash !== "") {
+                // Prevent default anchor click behavior
+                event.preventDefault();
+
+                // Store hash
+                var hash = this.hash;
+
+                // Using jQuery's animate() method to add smooth page scroll
+                // The optional number (1000) specifies the number of milliseconds it takes to scroll to the specified area
+                $('html, body').animate({
+                    scrollLeft: $(hash).offset().left - 250
+                }, 1000, function () {
+                    // Add hash (#) to URL when done scrolling (default click behavior)
+                    window.location.hash = hash;
+                });
+            } // End if
+        });
+
+        var anchor = document.getElementById('@Model.Anchor');
+        if (anchor != null) {
+            anchor.scrollIntoView(true);
+        }
+    });
+
+    function populateDatabase(Id, Name, ConnectionString, Table) {
+        //document.forms['configureDatabase'].elements['Id'].value = Id;
+        document.forms['configureDatabaseForm'].elements['Name'].value = Name;
+        document.forms['configureDatabaseForm'].elements['ConnectionString'].value = ConnectionString;
+        document.forms['configureDatabaseForm'].elements['Table'].value = Table;
+        return false;
+    }
+
+    function populateDirectory(Id, Name, Path) {
+        //document.forms['configureDirectoryForm'].elements['Id'].value = Id;
+        document.forms['configureDirectoryForm'].elements['Name'].value = Name;
+        document.forms['configureDirectoryForm'].elements['Directory'].value = Path;
+        return false;
+    }
+
+    function populateRestfulApi(Id, Name, Url, Body) {
+        //document.forms['configureDirectoryForm'].elements['Id'].value = Id;
+        document.forms['configureRestfulApiForm'].elements['Name'].value = Name;
+        document.forms['configureRestfulApiForm'].elements['Url'].value = Url;
+        document.forms['configureRestfulApiForm'].elements['Body'].value = Body;
+        return false;
+    }
+</script>
+
+<!-- Page Wrapper -->
+<div id="page-wrapper">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Panel (Banner) -->
+        <section class="panel banner">
+            <div class="content span-4" style="background-color:white">
+                <div><img src="~/images/FEDAGO_Logo-Mar-2019.jpg" style="max-height:100%;max-width:100%" /></div>
+                <ul class="actions">
+                    <li><a href="#ngrok" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="ngrok">
+            <div class="content span-4 color0">
+                <h2 class="major">ngrok Settings</h2>
+                <form asp-controller="Home" asp-action="UpdateSettings" method="post">
+                    NGrok AuthToken: <input type="text" name="ngrokAuthToken" value="@Model.NGrokAuthToken" placeholder="<enter your ngrok Auth Token here>" />
+                    <br />
+                    <button>Update Settings</button>
+                </form>
+                <br />
+                <ul class="actions">
+                    <li><a href="#configuration" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="configuration">
+            <div class="content span-4 color2">
+                <h2 class="major">Configuration</h2>
+                <textarea height="100%" name="Token" readonly
+                                 style="width:100%;
+height:75%;
+box-sizing: border-box;         /* For IE and modern versions of Chrome */
+-moz-box-sizing: border-box;    /* For Firefox                          */
+-webkit-box-sizing: border-box; /* For Safari                           */">@Model.SerializedConfiguration</textarea>
+                <ul class="actions">
+                    <li><a href="#logs" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="logs">
+            <div class="content span-4 color0">
+                <h2 class="major">Logs</h2>
+                <textarea height="100%" name="Token" readonly
+                          style="width:100%;
+height:75%;
+box-sizing: border-box;         /* For IE and modern versions of Chrome */
+-moz-box-sizing: border-box;    /* For Firefox                          */
+-webkit-box-sizing: border-box; /* For Safari                           */">@Model.Logs</textarea>
+                <ul class="actions">
+                    <li><a href="#ngrok" class="button primary color1 circle icon fa-angle-left">Next</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Copyright -->
+        <div class="copyright">&copy; fedago. Design: <a href="https://html5up.net">HTML5 UP</a>.</div>
+
+    </div>
+
+</div>

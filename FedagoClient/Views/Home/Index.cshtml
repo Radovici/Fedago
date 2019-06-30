@@ -1,0 +1,662 @@
+﻿@model DataBazrPeer.Controllers.HomeController
+
+@{
+    ViewData["Title"] = "Fedago App";
+}
+
+<!--
+    Ethereal by HTML5 UP
+    html5up.net | ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<!--
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+-->
+<link rel="stylesheet" href="~/Html5Up/Ethereal/assets/css/main.css" />
+<noscript><link rel="stylesheet" href="~/Html5Up/Ethereal/assets/css/noscript.css" /></noscript>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!-- Scripts -->
+@*<script src="~/Html5Up/Ethereal/assets/js/jquery.min.js"></script>*@
+<script src="~/Html5Up/Ethereal/assets/js/browser.min.js"></script>
+<script src="~/Html5Up/Ethereal/assets/js/breakpoints.min.js"></script>
+<script src="~/Html5Up/Ethereal/assets/js/main.js"></script>
+
+<script>
+    //$.noConflict(); //fix multiple jquery instances
+
+    $(document).ready(function () {
+        // Add smooth scrolling to all links
+        $("a").on('click', function (event) {
+
+            // Make sure this.hash has a value before overriding default behavior
+            if (this.hash !== "") {
+                // Prevent default anchor click behavior
+                event.preventDefault();
+
+                // Store hash
+                var hash = this.hash;
+
+                // Using jQuery's animate() method to add smooth page scroll
+                // The optional number (1000) specifies the number of milliseconds it takes to scroll to the specified area
+                $('html, body').animate({
+                    scrollLeft: $(hash).offset().left - 250
+                }, 1000, function () {
+                    // Add hash (#) to URL when done scrolling (default click behavior)
+                    window.location.hash = hash;
+                });
+            } // End if
+        });
+
+        var anchor = document.getElementById('@Model.Anchor');
+        if (anchor != null) {
+            anchor.scrollIntoView(true);
+        }
+
+        var a = document.getElementById('PublicUrl'); //.getAttribute("href").value = "TESTING";
+        a.href = "@Model.PublicUrl";
+    });
+
+    function populateDatabase(Id, Name, ConnectionString, Table) {
+        document.forms['configureDatabaseForm'].elements['Id'].value = Id;
+        document.forms['configureDatabaseForm'].elements['Name'].value = Name;
+        document.forms['configureDatabaseForm'].elements['ConnectionString'].value = ConnectionString;
+        document.forms['configureDatabaseForm'].elements['Table'].value = Table;
+        return false;
+    }
+
+    function populateDirectory(Id, Name, Path) {
+        document.forms['configureDirectoryForm'].elements['Id'].value = Id;
+        document.forms['configureDirectoryForm'].elements['Name'].value = Name;
+        document.forms['configureDirectoryForm'].elements['Path'].value = Path;
+        return false;
+    }
+
+    function populateRestfulApi(Id, Name, Url, Body) {
+        document.forms['configureRestfulApiForm'].elements['Id'].value = Id;
+        document.forms['configureRestfulApiForm'].elements['Name'].value = Name;
+        document.forms['configureRestfulApiForm'].elements['Url'].value = Url;
+        document.forms['configureRestfulApiForm'].elements['Body'].value = Body;
+        return false;
+    }
+
+    function confirmSubmit(element) {
+        var confirmed = false; //return false by default
+        var idElement = element.elements["Id"];
+        if (idElement.value != null && idElement.value != "") {
+            //confirmed = confirm("Are you sure you want to edit this item?\nIf not, then press 'Cancel' and toggle the clear switch.")
+            var dialog = $("#dialog-confirm");
+            dialog.dialog({
+                resizable: false,
+                height: "auto",
+                width: "25%",
+                modal: true,
+                buttons: {
+                    "Edit": function () {
+                        $(this).dialog("close");                        
+                        element.submit();
+                        $.ajax({
+                            url: element.action,
+                            timeout: 60000, //60s
+                            type: "POST",
+                            data: $(element).serialize(),
+                            dataType: 'json',
+                            //error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            //    alert("An error has occurred making the request: " + errorThrown)
+                            //},
+                            //success: function (data) {
+                            //    //Do stuff here on success such as modal info      
+                            //    $(this).dialog("close");
+                            //}
+                        });
+                    },
+                    "Create": function () {
+                        $(this).dialog("close");
+                        idElement.value = null;                        
+                        //<form asp-controller="Home" asp-action="AddDatabase" method="post" style="font-size:smaller" id="configureDatabaseForm" onsubmit="event.preventDefault();confirmSubmit(this)">
+                        $.ajax({
+                            url: element.action,
+                            timeout: 60000, //60s
+                            type: "POST",
+                            data: $(element).serialize(),
+                            dataType: 'json',
+                            //error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            //    alert("An error has occurred making the request: " + errorThrown)
+                            //},
+                            //success: function (data) {
+                            //    //Do stuff here on success such as modal info      
+                            //    $(this).dialog("close");
+                            //}
+                        });
+                        //element.submit();
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+        return confirmed;
+    }
+
+    function refreshDataTables(id, name, token) {
+        var element = document.getElementById('queryHeader');
+        element.innerHTML = 'Query - ' + name + ' (' + id + ')'; //['configureRestfulApiForm'].elements['Body'].value = Body;
+        var publicUrl = "@Model.ClientApiCallbackUrl/" + id;
+        //$('#example').DataTable({
+        //    "processing": true,
+        //    "serverSide": true,
+        //    "ajax": {
+        //        "url": publicUrl,
+        //        "type": "POST",
+        //        "data": {
+        //            "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NTU0NDM0OTcsImV4cCI6MTg3MDgwMzQ5NywiaXNzIjoiaHR0cHM6Ly9kZW1vLmZlZGFnby5jb20iLCJhdWQiOlsiaHR0cHM6Ly9kZW1vLmZlZGFnby5jb20vcmVzb3VyY2VzIiwibm9wX2FwaSJdLCJjbGllbnRfaWQiOiJhYTk0MzgxYS02MzY1LTQyNGQtYWFmMC1lZGUxMzUxZDlhZTciLCJzdWIiOiJhYTk0MzgxYS02MzY1LTQyNGQtYWFmMC1lZGUxMzUxZDlhZTciLCJhdXRoX3RpbWUiOjE1NTU0NDM0OTYsImlkcCI6ImxvY2FsIiwic2NvcGUiOlsibm9wX2FwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.bpaomM0ehZIkYHW9vqCqkvM_dRfHZ2t5gcWOiXt0cNkLx8yn-AUfG2yhdv893m3_pIhVA_MnFwwwVuu_e88ECc5an_yB2KcDvLXc3szIeTjMQQoq4A_8KoTZOsbiua1WBl98T1Lv5Q2KTtrySnguKSd4zKmUYnqrLnDfAVq_ZqtIHUxzpZHuhG3OiJTt4pQhca3eUdNw8KHK1qnGohT3JBzMCcBYi6HFDVs-VN1oe_1LS9h5cGV86KkAajV__kbohXDpBJyKsni73EPwx4QmeiJyQQPYUBPULjlVGpymnbpG3mfuoz5_C0NGZ8_X0whLZB5eBSbd18-HVYD8PnOkYA"
+        //        }
+        //    }
+        //});
+
+        //https://github.com/martinberlin/datatables-dynamic-columns/blob/master/dynamic-headers.html
+        if ($.fn.dataTable.isDataTable('#example')) {
+            $('#example').DataTable().destroy();
+            $('#example').empty();
+        }
+        var data,
+            tableName = '#example',
+            columns,
+            str,
+            jqxhr = $.ajax({ url: publicUrl, type: "POST", dataType: "json", contentType: "application/x-www-form-urlencoded; charset=UTF-8" })
+                .done(function () {
+                    data = JSON.parse(jqxhr.responseText);
+                    // Iterate each column and print table headers for Datatables
+                    $.each(data.columns, function (k, colObj) {
+                        str = '<th>' + colObj.name + '</th>';
+                        $(str).appendTo(tableName + '>thead>tr');
+                    });
+                    // Add some Render transformations to Columns
+                    // Not a good practice to add any of this in API/ Json side
+                    data.columns[0].render = function (data, type, row) {
+                        return '<h4>' + data + '</h4>';
+                    }
+                    // Debug? console.log(data.columns[0]);
+                    $(tableName).dataTable({
+                        //"processing": true,
+                        //"serverSide": true,
+                        "data": data.data,
+                        "columns": data.columns,
+                        "fnInitComplete": function () {
+                            // Event handler to be fired when rendering is complete (Turn off Loading gif for example)
+                            console.log('Datatable rendering complete');
+                        }
+                    });
+                })
+                .fail(function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    console.log(msg);
+                });
+        return false;
+    }
+</script>
+
+<div id="dialog-confirm" title="Quick Check" style="display:none;" class="DialogButtons">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:10px 10px 10px 0;"></span>Do you want to 'Edit' this item,<br />'Create' a new one,<br />or 'Cancel' this submission?</p>
+</div>
+
+<style>
+    table.dataTable tr.odd {
+        background-color: #514756;
+        border: 1px lightgrey;
+    }
+
+    table.dataTable tr.even {
+        background-color: #736b77;
+        border: 1px lightgrey;
+    }
+
+    div.dataTables_filter input {
+        color: black;
+    }
+</style>
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+
+@*
+    https://stackoverflow.com/questions/3915917/make-a-link-use-post-instead-of-get
+    <style>
+        .inline {
+          display: inline;
+        }
+
+        .link-button {
+          background: none;
+          border: none;
+          color: blue;
+          text-decoration: underline;
+          cursor: pointer;
+          font-size: 1em;
+          font-family: serif;
+        }
+        .link-button:focus {
+          outline: none;
+        }
+        .link-button:active {
+          color:red;
+        }
+    </style>
+*@
+
+<!-- Page Wrapper -->
+<div id="page-wrapper">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Panel (Banner) -->
+        <section class="panel banner">
+            <div class="content span-4" style="background-color:white">
+                <div><img src="~/images/FEDAGO_Logo-Mar-2019.jpg" style="max-height:100%;max-width:100%" /></div>
+                <ul class="actions">
+                    <li><a href="#login" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                    <li><a href="@Model.PublicUrl" class="button primary color1 icon fa-angle-right" id="PublicUrl" target="_blank">Public URL</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="login">
+            <div class="content span-4 color0">
+                <h2 class="major">Login &amp; Registration</h2>
+                <a href="https://demo.fedago.com/login" target="_blank">Click here to login</a>
+                <br />
+                <ul class="actions">
+                    <li><a href="#api" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="api">
+            <div class="content span-4 color2">
+                <h2 class="major">API</h2>
+                <a href="https://demo.fedago.com/Admin/ManageClientsAdmin/List" target="_blank">Create API client</a>
+                <br />
+                <ul class="actions">
+                    <li><a href="#connect" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="connect">
+            <div class="content span-4 color0">
+                <h2 class="major">Connect</h2>
+                Copy &amp; paste the "Client Id" and "Client Secret" from the API client<br />
+                <form asp-controller="Home" asp-action="GetToken" method="post">
+                    Id: <input type="text" name="Id" placeholder="Input your Id here" value="@string.Format(Model != null ? Model.ClientApiId : string.Empty)" />
+                    Secret: <input type="text" name="Secret" placeholder="Input your Secret here" value="@string.Format(Model != null ? Model.ClientApiSecret : string.Empty)" />
+                    <hr />
+                    <button>Connect</button>
+                </form>
+                <br />
+                <ul class="actions">
+                    <li><a href="#token" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="token">
+            <div class="content span-4 color2">
+                <h2 class="major">Access Token</h2>
+                Callback: <input readonly type="text" name="CallbackUrl" placeholder="Input your CallbackUrl here" value="@string.Format(Model != null ? Model.ClientApiCallbackUrl : string.Empty)" />
+                <br />
+                Token: <textarea height="100%" name="Token" readonly
+                                 style="width:100%;
+height:25%;
+box-sizing: border-box;         /* For IE and modern versions of Chrome */
+-moz-box-sizing: border-box;    /* For Firefox                          */
+-webkit-box-sizing: border-box; /* For Safari                           */">@string.Format(Model != null ? Model.ClientApiToken : string.Empty)</textarea>
+                <ul class="actions">
+                    <li><a href="#configure" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel -->
+        <section class="panel banner" id="configure">
+            <div class="content span-4 color0">
+                <h2 class="major">Configure Data Sources</h2>
+                <ul class="grid-icons three connected" style="zoom:75%">
+                    <li style="text-align:center"><a href="#configureDatabase"><span class="icon fa-database"></span><span class="label">SQL Server</span></a></li>
+                    <li style="text-align:center"><a href="#configureDirectory"><span class="icon fa-file"></span><span class="label">Directory</span></a></li>
+                    <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-external-link"></span><span class="label">RESTful API</span></a></li>
+                    <li style="text-align:center"><a href="#configureDatabase"><span class="icon fa-database"></span><span class="label">mySQL</span></a></li>
+                    <li style="text-align:center"><a href="#configureDatabase"><span class="icon fa-database"></span><span class="label">Oracle</span></a></li>
+                    <li style="text-align:center"><a href="#configureDatabase"><span class="icon fa-database"></span><span class="label">Mulesoft</span></a></li>
+
+                    @*<li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-github"></span><span class="label">Github</span></a></li>
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-amazon"></span><span class="label">AWS</span></a></li>
+
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-linkedin"></span><span class="label">LinkedIn</span></a></li>
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-facebook"></span><span class="label">Facebook</span></a></li>
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-twitter"></span><span class="label">Twitter</span></a></li>
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-twitter"></span><span class="label">Twitter</span></a></li>
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-twitter"></span><span class="label">Twitter</span></a></li>
+                        <li style="text-align:center"><a href="#configureRestfulApi"><span class="icon fa-twitter"></span><span class="label">Twitter</span></a></li>*@
+                    @*<i class="fab fa-aws"></i>*@
+                    <!--<li><span class="icon fa-paper-plane"><span class="label">Sit</span></span></li>
+                    <li><span class="icon fa-bar-chart"><span class="label">Amet</span></span></li>
+                    <li><span class="icon fa-code"><span class="label">Nullam</span></span></li>-->
+                </ul>
+                <br />
+                <ul class="actions">
+                    <li><a href="#datasources" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="datasources">
+            <div class="content span-5 color2">
+                <h2 class="major">Data sources</h2>
+                <div style="overflow-y:auto;zoom:75%">
+                    <table>
+                        <tr>
+                            <th>Delete</th>
+                            <th>Name</th>
+                            <th>Url</th>
+                            <th>Configuration</th>
+                            <th>Metadata</th>
+                            <th>Type</th>
+                        </tr>
+                        @foreach (DataBazrPeer.Configurations.IDataSource dataSource in Model.DataSources.OrderBy(lmb => lmb.Id))
+                        {
+                            <tr>
+                                <td>
+                                    <form action="DeleteDataSource" method="POST">
+                                        <input type="hidden" name="Id" value="@dataSource.Id" />
+                                        <button>Del</button>
+                                    </form>
+                                </td>
+                                <td>@dataSource.Display</td>
+                                <td>
+                                    @*<form action="@string.Format("{0}/{1}", Model.ClientApiCallbackUrl, dataSource.Id)" method="POST">
+                                            <input type="hidden" value="@Model.ClientApiToken" />
+                                            <button>Query</button>
+                                        </form>*@
+                                    <button><a href="#query" onclick="refreshDataTables('@dataSource.Id', '@dataSource.Name', '@Model.ClientApiToken')">Query</a></button>
+                                </td>
+                                @switch (dataSource.Type)
+                                {
+                                    case "Database":
+                                        DataBazrPeer.Configurations.DatabaseConfiguration databaseConfiguration = (DataBazrPeer.Configurations.DatabaseConfiguration)dataSource;
+                                        <td><button><a href="@string.Format("#configureDatabase")" onclick="populateDatabase('@databaseConfiguration.Id', '@databaseConfiguration.Name', '@databaseConfiguration.ConnectionString', '@databaseConfiguration.Table')">Edit</a></button></td>
+                                        break;
+                                    case "File System":
+                                        DataBazrPeer.Configurations.DirectoryConfiguration directoryConfiguration = (DataBazrPeer.Configurations.DirectoryConfiguration)dataSource;
+                                        <td><button><a href="@string.Format("#configureDirectory")" onclick="populateDirectory('@directoryConfiguration.Id', '@directoryConfiguration.Name', '@directoryConfiguration.Path.Replace("\\", "\\\\")');">Edit</a></button></td>
+                                        break;
+                                    case "RESTful API":
+                                        DataBazrPeer.Configurations.RestfulConfiguration restfulConfiguration = (DataBazrPeer.Configurations.RestfulConfiguration)dataSource;
+                                        <td><button><a href="@string.Format("#configureRestfulApi")" onclick="populateRestfulApi('@restfulConfiguration.Id', '@restfulConfiguration.Name', '@restfulConfiguration.Url', '@restfulConfiguration.Body')">Edit</a></button></td>
+                                        break;
+                                    default:
+                                        <td></td>
+                                        break;
+                                }
+                                <td><button><a href="@string.Format("https://demo.fedago.com/Admin/Product/Edit/{0}", dataSource.Id)" target="_blank">Edit</a></button></td>
+                                <td>@dataSource.Type</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <br />
+                <ul class="actions">
+                    <li><a href="#configureDatabase" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <script src="~/DataTables/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="~/DataTables/jquery.dataTables.min.css" />
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="query">
+            <div class="content span-5 color4">
+                <h2 class="major" id="queryHeader">Query</h2> <!--add query name-->
+                <div style="overflow-y:auto;zoom:75%;padding-right:1em">
+                    <table id="example" class="table table-striped table-condensed dataTable">
+                        <thead><tr></tr></thead>
+                    </table>
+                </div>
+                <br />
+                <ul class="actions">
+                    <li><a href="#configureDatabase" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="configureDatabase">
+            <div class="content span-4 color0">
+                <div>
+                    <div style="float:left;">
+                        <h2 class="major">
+                            Database Configuration
+                        </h2>
+                    </div>
+                    <div style="float:right;">
+                        <!-- Rectangular switch -->
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="populateDatabase(null, null, null, null)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <form asp-controller="Home" asp-action="AddDatabase" method="post" style="font-size:smaller" id="configureDatabaseForm" onsubmit="event.preventDefault();confirmSubmit(this)">
+                    <input type="hidden" name="Id" />
+                    Name: <input type="text" name="Name" placeholder="<Short Name>" />
+                    ConnectionString: <input type="text" name="ConnectionString" placeholder="<ConnectionString>" />
+                    Table (view or function): <input type="text" name="Table" placeholder="<Table or View Name>" />
+                    <input type="hidden" name="IsFunction" value="false" />
+                    <br />
+                    <button>Add Database</button>
+                </form>
+                <br />
+                <ul class="actions">
+                    <li><a href="#configureDirectory" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="configureDirectory">
+            <div class="content span-4 color2">
+                <div>
+                    <div style="float:left;">
+                        <h2 class="major">
+                            Directory Configuration
+                        </h2>
+                    </div>
+                    <div style="float:right;">
+                        <!-- Rectangular switch -->
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="populateDirectory(null, null, null)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <form asp-controller="Home" asp-action="AddDirectory" method="post" style="font-size:smaller" name="configureDirectoryForm" onsubmit="event.preventDefault();confirmSubmit(this)">
+                    <input type="hidden" name="Id" />
+                    Name: <input type="text" name="Name" placeholder="<Short Name>" />
+                    Path: <input type="text" name="Path" placeholder="<Directory (or File) Path>" />
+                    <br />
+                    <button>Add Path</button>
+                </form>
+                @*@using (Html.BeginForm("AddDirectory", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <text>Directory:</text><input type="file" name="file" /><br />
+                        <input type="submit" name="Submit" id="Submit" value="Upload" />
+                    }*@
+                <br />
+                <ul class="actions">
+                    <li><a href="#configureRestfulApi" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="configureRestfulApi">
+            <div class="content span-4 color0">
+                <div>
+                    <div style="float:left;">
+                        <h2 class="major">
+                            RESTful API Configuration
+                        </h2>
+                    </div>
+                    <div style="float:right;">
+                        <!-- Rectangular switch -->
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="populateRestfulApi(null, null, null, null)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <form asp-controller="Home" asp-action="AddRestfulApi" method="post" style="font-size:smaller" id="configureRestfulApiForm" onsubmit="event.preventDefault();confirmSubmit(this)">
+                    <input type="hidden" name="Id" />
+                    Name: <input type="text" name="Name" placeholder="<Short Name>" />
+                    Url: <input type="text" name="Url" placeholder="<Restful Url>" />
+                    Body: <input type="text" name="Body" placeholder="<Body>" />
+                    <br />
+                    <button>Add RESTful URL</button>
+                </form>
+                <br />
+                <ul class="actions">
+                    <li><a href="#publish" class="button primary color1 circle icon fa-angle-right">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Panel (Spotlight) -->
+        <section class="panel banner" id="publish">
+            <div class="content span-4 color2">
+                <h2 class="major">Publish</h2>
+                <form asp-controller="Home" asp-action="Publish" method="post">
+                    <button>Publish</button>
+                </form>
+                <br />
+                <ul class="actions">
+                    <li><a href="#login" class="button primary color1 circle icon fa-angle-left">Next</a></li>
+                </ul>
+            </div>
+            @*<div class="image filtered tinted" data-position="top left">
+                    <img src="~/Html5Up/Ethereal/images/pic02.jpg" alt="" />
+                </div>*@
+        </section>
+
+        <!-- Copyright -->
+        <div class="copyright">&copy; fedago. Design: <a href="https://html5up.net">HTML5 UP</a>.</div>
+
+    </div>
+
+</div>

@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>e216acd4-3aed-4f5a-9339-ef006d1f65ce</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Assets\images\**" />
+    <Content Remove="Assets\images\**" />
+    <EmbeddedResource Remove="Assets\images\**" />
+    <None Remove="Assets\images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\ngrok\Mac64\ngrok.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\ngrok\Mac64\ngrok.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Home\Settings.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\ngrok\Mac64\ngrok">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\ngrok\Win64\ngrok.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,74 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+.green {
+    background-image: -webkit-linear-gradient(top, #13fB04 0%, #58e343 50%, #ADED99 100%);
+}
+
+.orange {
+    background-image: -webkit-linear-gradient(top, #f9a004 0%, #e0ac45 50%, #ead698 100%);
+}
+
+
+.red {
+    background-image: -webkit-linear-gradient(top, #fb1304 0%, #e35843 50%, #edad99 100%);
+}
+
+
+.led {
+    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    box-shadow: 0px 0px 3px black;
+    margin: 5px;
+    zoom: 5;
+}
+
+    .led:after {
+        display: block;
+        content: '';
+        margin-left: 1px;
+        margin-right: 1px;
+        width: 8px;
+        height: 6px;
+        -webkit-border-top-right-radius: 4px 3px;
+        -webkit-border-top-left-radius: 4px 3px;
+        -webkit-border-bottom-right-radius: 4px 3px;
+        -webkit-border-bottom-left-radius: 4px 3px;
+        background-image: -webkit-linear-gradient(top, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 100%);
+    }
