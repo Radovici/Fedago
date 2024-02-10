@@ -1,0 +1,16 @@
+site_name: Fedago
+site_url: https://fedago.example.com
+site_description: Federated Data Governance for AI Tools
+
+nav:
+  - Home: index.md
+  - About: about.md
+  - Project Plan and Roadmap: roadmap.md
+  - Fedago Layer Details: layer.md
+  - Investor Information: investors.md
+  - Contact: contact.md
+
+theme:
+  name: material
+
+repo_url: https://github.com/Radovici/Fedago
