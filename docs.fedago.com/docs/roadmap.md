@@ -6,6 +6,7 @@ As of now, Fedago is in its initial launch phase, with a focus on integrating wi
 
 ## Roadmap
 
+- **Q1 2024**: Launch of the Fedago platform alpha.
 - **Q2 2024**: Launch of the Fedago platform beta.
 - **Q3 2024**: Integration with leading AI services.
 - **Q4 2024**: Introduction of advanced analytics for data governance insights.
