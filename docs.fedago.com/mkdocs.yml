@@ -9,12 +9,12 @@ nav:
   - Fedago Layer Details: layer.md
   - Investor Information: investors.md
   - Contact: contact.md
-  - Memes: memes.md
 
 theme:
   name: material
+  custom_dir: overrides
 
-repo_url: https://github.com/Radovici/Fedago
+# repo_url: https://github.com/Radovici/Fedago
 
 extra:
   analytics:

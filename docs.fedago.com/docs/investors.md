@@ -4,5 +4,5 @@ Fedago is at the forefront of addressing the critical need for data governance i
 
 ## Investment Opportunities
 
-For detailed information on investment opportunities and to discuss how you can be part of Fedago's journey, please [contact us](contact.md).
+For detailed information on investment opportunities and to discuss how you can be part of Fedago's journey, please <a href="javascript:void(Tawk_API.toggle())">click here to chat with us</a>!
 

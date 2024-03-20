@@ -4,9 +4,10 @@ We're eager to hear from you, whether you have questions, feedback, or interest 
 
 ## Get in Touch
 
-Email us at: contact@fedago.com
+Feel free to reach out to us with any questions or inquiries.
 
-Or fill out our [online contact form](#).
+<a href="javascript:void(Tawk_API.toggle())">Click here to chat with us</a>!
+
+You can also email us at: <a href="mailto:support@fedago.com">support@fedago.com</a>
 
 Follow us on our social media channels to stay updated with the latest from Fedago.
-
