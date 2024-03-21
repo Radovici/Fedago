@@ -5,7 +5,12 @@ site_description: Federated Data Governance for AI Tools
 nav:
   - Home: index.md
   - About: about.md
-  - Project Plan and Roadmap: roadmap.md
+  - Project Plan and Roadmap:
+    - 2024 Roadmap: Roadmap/roadmap.md
+    - 2024 Menus (Offerings):
+      - Fall Menu: Roadmap/2024_Q2.md
+      - Summer Menu: Roadmap/2024_Q3.md
+      - Spring Menu: Roadmap/2024_Q4.md
   - Fedago Layer Details: layer.md
   - Investor Information: investors.md
   - Contact: contact.md
@@ -13,6 +18,14 @@ nav:
 theme:
   name: material
   custom_dir: overrides
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - navigation.tracking  
 
 # repo_url: https://github.com/Radovici/Fedago
 
