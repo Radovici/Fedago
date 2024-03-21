@@ -12,7 +12,7 @@ This spring, we are excited to introduce a suite of offerings designed to give o
   
 - **Support for All Popular Models**: Our platform integrates with all popular generative AI models, including OpenAI's ChatGPT via their API.
   
-- **Local and Custom Models**: Beyond mainstream models, we support the integration of local models such as Meta's Llama 2 (using Ollama), as well as fully custom models tailored to specific organizational needs.
+- **Local and Custom Models**: Beyond mainstream models, we support the integration of local models such as Meta's Llama 2 (using Ollama), as well as fine-tuned models tailored to specific organizational needs.
   
 - **Full Audit of Chats via Database (Supabase) Website for Data Governance**: To reinforce data governance, all interactions are fully auditable with our Supabase-backed solution, ensuring transparency and compliance.
 
@@ -29,6 +29,14 @@ Building on our spring offerings, the summer menu will unveil the complete Fedag
 3. **Productivity Boost**: Enhanced prompt engineering and contextual support to improve the quality and relevance of AI-generated outputs.
    
 4. **Compliance and Governance Features**: Advanced tools including filters, blockers, and cyphers to prevent the leakage of sensitive information, plus timers to halt potentially risky queries—fortifying your company's data governance framework.
+
+### Fall Menu: Additional Modules & Reporting
+
+1. Advanced analytics
+
+2. Realtime cost analysis including thresholds and alerts
+
+3. Addon features such as multi-chats and NPCs (non-player characters).
 
 **Join Us**: As we continue to expand our services, we invite organizations to explore the potential of Fedago to transform their approach to generative AI. Our summer offerings are designed to provide not just a tool, but a strategic advantage in data governance, cost management, and productivity.
 
