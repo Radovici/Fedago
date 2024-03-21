@@ -38,6 +38,8 @@ Building on our spring offerings, the summer menu will unveil the complete Fedag
 
 3. Addon features such as multi-chats and NPCs (non-player characters).
 
+4. Vercel-like one-step creation of the whole Fedago offerings customized to your business.
+
 **Join Us**: As we continue to expand our services, we invite organizations to explore the potential of Fedago to transform their approach to generative AI. Our summer offerings are designed to provide not just a tool, but a strategic advantage in data governance, cost management, and productivity.
 
 Stay tuned for more updates as we progress through our roadmap, and join us in shaping the future of federated data governance in the AI era.
