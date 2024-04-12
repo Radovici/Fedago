@@ -15,4 +15,79 @@
     })();
 </script>
 <!--End of Tawk.to Script-->
+
+<div id="main-special-offer" class="main-special-offer">
+    <span class="close-btn" onclick="closeSpecialOffer()">×</span>
+    <p><strong>Special Offer for Spring:</strong> As we're just opening our doors, we're excited to forge partnerships with visionary organizations. We're extending these services <strong>complimentary</strong> to a select group of early adopters. This collaboration aims to refine our offerings while equipping you with advanced, OEM branded technologies to navigate and optimize generative AI usage across your organization.</p>
+</div>  
+
+<style>
+.main-special-offer {
+  position: fixed;
+  top: 20px; /* Adjust as needed */
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: auto; /* Allows the box to grow based on content width */
+  min-width: 300px; /* Minimum width */
+  max-width: 50%; /* Maximum width to not span the whole width */
+  background-color: rgba(240, 248, 255, 0.95); /* Slightly more opaque for readability */
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1001; /* Ensure it's above most content */
+  display: none; /* Initially hidden */
+  transition: all 0.5s ease-in-out;
+  font-size: 18px; /* Larger font size for readability */
+}
+
+.main-special-offer p {
+  margin: 0;
+  padding: 0;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 24px;
+  color: #333;
+}
+
+.special-offer::before {
+  content: "🔥 HOT DEAL!";
+  position: absolute;
+  top: -30px; /* Adjusted to be above the box */
+  left: 50%;
+  transform: translate(-50%, 0) rotate(5deg); /* Center above the box */
+  padding: 5px 20px;
+  background-color: #ff4500; /* Vibrant orangish background */
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-size: 20px; /* Larger font size for the badge */
+}
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      if (!document.cookie.split(';').some((item) => item.trim().startsWith('mainSpecialOfferShown='))) {
+        setTimeout(function() {
+          var offerDiv = document.getElementById('main-special-offer');
+          offerDiv.style.display = 'block';
+          offerDiv.style.animation = 'slideDown 0.5s forwards';
+    
+          var expiry = new Date();
+          expiry.setTime(expiry.getTime() + (3*24*60*60*1000)); // 3 days from now
+          document.cookie = `mainSpecialOfferShown=true; expires=${expiry.toUTCString()}; path=/`;
+        }, 5000);
+      }
+    });
+    
+    function closeSpecialOffer() {
+      document.getElementById('main-special-offer').style.display = 'none';
+    }
+</script>
+      
 {% endblock %}
